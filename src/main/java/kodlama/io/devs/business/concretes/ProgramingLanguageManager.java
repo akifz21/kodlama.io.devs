@@ -1,42 +1,34 @@
 package kodlama.io.devs.business.concretes;
-
 import kodlama.io.devs.business.abstracts.ProgramingLanguageService;
+import kodlama.io.devs.business.mappers.ProgramingLanguageMapper;
 import kodlama.io.devs.business.requests.ProgramingLanguageRequest;
 import kodlama.io.devs.business.responses.ProgramingLanguageResponse;
 import kodlama.io.devs.dataAccess.abstracts.ProgramingLanguageRepository;
 import kodlama.io.devs.entities.concretes.ProgramingLanguage;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
+
 import java.util.List;
 @Service
 public class ProgramingLanguageManager implements ProgramingLanguageService {
     ProgramingLanguageRepository programingLanguageRepository;
+    ProgramingLanguageMapper programingLanguageMapper;
 
-    public ProgramingLanguageManager(ProgramingLanguageRepository programingLanguageRepository) {
+    public ProgramingLanguageManager(ProgramingLanguageRepository programingLanguageRepository, ProgramingLanguageMapper programingLanguageMapper) {
         this.programingLanguageRepository = programingLanguageRepository;
+        this.programingLanguageMapper = programingLanguageMapper;
     }
 
 
     @Override
     public List<ProgramingLanguageResponse> getALL() {
         List<ProgramingLanguage> languages = programingLanguageRepository.findAll();
-        List<ProgramingLanguageResponse> responses = new ArrayList<>();
-        for(ProgramingLanguage programingLanguage: languages){
-            ProgramingLanguageResponse responseItem = new ProgramingLanguageResponse();
-            responseItem.setId(programingLanguage.getId());
-            responseItem.setName(programingLanguage.getName());
-            responses.add(responseItem);
-        }
-        return responses;
+        return programingLanguageMapper.programingLanguageToResponseAll(languages);
     }
 
     @Override
     public ProgramingLanguageResponse getResponseById(int id) {
         ProgramingLanguage programingLanguage = programingLanguageRepository.findById(id);
-        ProgramingLanguageResponse languageResponse = new ProgramingLanguageResponse();
-        languageResponse.setName(programingLanguage.getName());
-        languageResponse.setId(programingLanguage.getId());
-        return languageResponse;
+        return programingLanguageMapper.programingLanguageToResponse(programingLanguage);
     }
 
     @Override
@@ -47,9 +39,7 @@ public class ProgramingLanguageManager implements ProgramingLanguageService {
     @Override
     public void add(ProgramingLanguageRequest languageRequest) throws Exception {
         checkNameValid(languageRequest.getName());
-        ProgramingLanguage programingLanguage = new ProgramingLanguage();
-        programingLanguage.setName(languageRequest.getName());
-        programingLanguageRepository.save(programingLanguage);
+        programingLanguageRepository.save(programingLanguageMapper.requestToProgramingLanguage(languageRequest));
     }
 
     @Override

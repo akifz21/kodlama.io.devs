@@ -2,46 +2,44 @@ package kodlama.io.devs.business.concretes;
 
 import kodlama.io.devs.business.abstracts.ProgramingLanguageService;
 import kodlama.io.devs.business.abstracts.TechnologyService;
+import kodlama.io.devs.business.mappers.TechnologyMapper;
 import kodlama.io.devs.business.requests.TechnologyRequest;
-import kodlama.io.devs.business.responses.TechnologyResponse;
+import kodlama.io.devs.business.responses.TechnologyPLNameResponse;
 import kodlama.io.devs.dataAccess.abstracts.TechnologyRepository;
 import kodlama.io.devs.entities.concretes.ProgramingLanguage;
 import kodlama.io.devs.entities.concretes.Technology;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class TechnologyManager implements TechnologyService {
     private TechnologyRepository technologyRepository;
     private ProgramingLanguageService programingLanguageService;
+    private TechnologyMapper technologyMapper;
 
-    public TechnologyManager(TechnologyRepository technologyRepository, ProgramingLanguageService programingLanguageService) {
+    public TechnologyManager(TechnologyRepository technologyRepository, ProgramingLanguageService programingLanguageService, TechnologyMapper technologyMapper) {
         this.technologyRepository = technologyRepository;
         this.programingLanguageService = programingLanguageService;
+        this.technologyMapper = technologyMapper;
     }
 
     @Override
-    public List<TechnologyResponse> getAll() {
+    public List<TechnologyPLNameResponse> getAll() {
         List<Technology> technologies = technologyRepository.findAll();
-        List<TechnologyResponse> responses = new ArrayList<>();
-        for (Technology technology: technologies){
-            TechnologyResponse technologyResponse = new TechnologyResponse();
-            technologyResponse.setName(technology.getName());
-            technologyResponse.setProgramingLanguageId(technology.getProgramingLanguage().getId());
-            technologyResponse.setId(technology.getId());
-            technologyResponse.setProgramingLanguageName(technology.getProgramingLanguage().getName());
-            responses.add(technologyResponse);
-        }
-        return responses;
+        return technologyMapper.technologyToResponseAll(technologies);
+    }
+
+    @Override
+    public TechnologyPLNameResponse getById(int id) {
+        Technology technology = technologyRepository.findById(id);
+        return technologyMapper.technologyToResponse(technology);
     }
 
     @Override
     public void add(TechnologyRequest technologyRequest) {
-        Technology technology = new Technology();
+        Technology technology = technologyMapper.requestToTechnology(technologyRequest);
         ProgramingLanguage programingLanguage = programingLanguageService.getById(technologyRequest.getProgramingLanguageId());
-        technology.setName(technologyRequest.getName());
         technology.setProgramingLanguage(programingLanguage);
         technologyRepository.save(technology);
     }

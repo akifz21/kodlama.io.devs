@@ -4,13 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProgramingLanguageResponse {
-    private  int id;
+public class TechnologyPLNameResponse {
+    private int id;
+    private String programingLanguageName;
     private String name;
-    List<TechnologyResponse> technologies;
 }

@@ -2,7 +2,7 @@ package kodlama.io.devs.webApi.controllers;
 
 import kodlama.io.devs.business.abstracts.TechnologyService;
 import kodlama.io.devs.business.requests.TechnologyRequest;
-import kodlama.io.devs.business.responses.TechnologyResponse;
+import kodlama.io.devs.business.responses.TechnologyPLNameResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,8 +18,12 @@ public class TechnologiesController {
     }
 
     @GetMapping("/getall")
-    public List<TechnologyResponse> getAll(){
+    public List<TechnologyPLNameResponse> getAll(){
         return technologyService.getAll();
+    }
+    @GetMapping("/getbyId/{id}")
+    public TechnologyPLNameResponse getById(@PathVariable int id){
+        return technologyService.getById(id);
     }
     @PostMapping("/add")
     public void add(@RequestBody TechnologyRequest technologyRequest){
